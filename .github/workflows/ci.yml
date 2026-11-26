@@ -28,3 +28,22 @@ jobs:
         env:
           PYTHONPATH: .
         run: python -m unittest discover -s tests -v
+
+  deploy:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Hae koodi
+        uses: actions/checkout@v6
+
+      - name: Julkaise palvelimelle A
+        env:
+          SSH_KEY: ${{ secrets.CPOUTA_SSH_KEY }}
+          HOST: ${{ secrets.CPOUTA_HOST }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/viikko5_actions
+          chmod 600 ~/.ssh/viikko5_actions
+          ssh -i ~/.ssh/viikko5_actions -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=.github/ssh_known_hosts ubuntu@"$HOST" 'bash /home/ubuntu/viikko5/scripts/deploy.sh'
