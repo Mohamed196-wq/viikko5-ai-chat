@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Viikko 5 – AI-chat</title>
+<style>
+body { font-family: Arial, sans-serif; background: #eef2f7; margin: 0; }
+main { max-width: 750px; margin: 35px auto; padding: 24px; background: white; border-radius: 12px; }
+h1 { color: #243b53; }
+#messages { height: 420px; overflow-y: auto; border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
+.message { padding: 10px; margin: 10px 0; border-radius: 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.user { background: #dcecff; }
+.assistant { background: #e8f5e9; }
+form { display: flex; gap: 10px; margin-top: 15px; }
+input { flex: 1; padding: 12px; min-width: 0; }
+button { padding: 12px 18px; background: #1769aa; color: white; border: 0; border-radius: 6px; cursor: pointer; }
+button:disabled { opacity: 0.5; }
+</style>
+</head>
+<body>
+<main>
+<h1>🤖 Viikko 5 – AI-chat</h1>
+<p>Kysy tekoälyltä mitä tahansa. Malli: Qwen 2.5.</p>
+<div id="messages" aria-live="polite"></div>
+<form id="form">
+<input id="message" maxlength="1000" placeholder="Kirjoita kysymys..." required>
+<button id="send" type="submit">Lähetä</button>
+</form>
+</main>
+<script>
+const box = document.getElementById("messages");
+const form = document.getElementById("form");
+const input = document.getElementById("message");
+const button = document.getElementById("send");
+
+function addMessage(role, text) {
+  const el = document.createElement("div");
+  el.className = "message " + role;
+  el.textContent = (role === "user" ? "Sinä: " : "Tekoäly: ") + text;
+  box.appendChild(el);
+  box.scrollTop = box.scrollHeight;
+  return el;
+}
+
+async function loadHistory() {
+  try {
+    const response = await fetch("history");
+    if (!response.ok) throw new Error("Historian lataus epäonnistui");
+    const history = await response.json();
+    history.forEach(m => addMessage(m.role, m.content));
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+form.addEventListener("submit", async event => {
+  event.preventDefault();
+  const message = input.value.trim();
+  if (!message) return;
+  addMessage("user", message);
+  input.value = "";
+  button.disabled = true;
+  const reply = addMessage("assistant", "");
+
+  try {
+    const response = await fetch("chat", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({message})
+    });
+    if (!response.ok) throw new Error("Palvelinvirhe: " + response.status);
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      reply.textContent += decoder.decode(value, {stream: true});
+      box.scrollTop = box.scrollHeight;
+    }
+    reply.textContent += decoder.decode();
+  } catch (error) {
+    reply.textContent += "\nVirhe: " + error.message;
+  } finally {
+    button.disabled = false;
+    input.focus();
+  }
+});
+
+loadHistory();
+</script>
+</body>
+</html>
