@@ -9,6 +9,6 @@ git pull --ff-only origin main
 
 sudo -n systemctl restart viikko5.service
 
-curl -fsS http://127.0.0.1:8002/ -o /dev/null
+curl --retry 10 --retry-connrefused --retry-delay 2 -fsS http://127.0.0.1:8002/ -o /dev/null
 
 echo "Viikko 5 julkaistu onnistuneesti!"
