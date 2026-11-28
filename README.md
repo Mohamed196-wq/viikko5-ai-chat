@@ -41,3 +41,15 @@ Palvelut on asetettu käynnistymään automaattisesti.
 ## Opitut asiat
 CI/CD automatisoi testauksen ja julkaisun.
 Rajatut käyttöoikeudet ja Tailscale parantavat turvallisuutta.
+
+## Lopputestauksen tulokset
+- Tekoäly vastaa keskustelussa.
+- Yksityisessä selainikkunassa keskustelu on tyhjä.
+- Epäonnistunut testi estää automaattisen julkaisun.
+- Palvelimen uudelleenkäynnistystesti onnistui.
+- Gunicorn, Ollama ja Nginx käynnistyivät automaattisesti.
+- Etusivu sekä viikkojen 2 ja 5 sivut palauttavat HTTP 200.
+- Viikon 5 tietokannan replikointia palvelimelle B ei ole vahvistettu.
+
+## GitHub Actions
+https://github.com/Mohamed196-wq/viikko5-ai-chat/actions
