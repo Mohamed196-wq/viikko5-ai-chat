@@ -1,3 +1,6 @@
+import unittest
 
-def test_intentional_failure():
-    assert False
+
+class TestIntentionalFailure(unittest.TestCase):
+    def test_failure(self):
+        self.fail("Intentional CI failure")
