@@ -46,9 +46,12 @@ jobs:
       - name: Julkaise palvelimelle A
         env:
           SSH_KEY: ${{ secrets.CPOUTA_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.CPOUTA_KNOWN_HOSTS }}
           HOST: ${{ secrets.CPOUTA_HOST }}
         run: |
           mkdir -p ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/viikko5_actions
           chmod 600 ~/.ssh/viikko5_actions
-          ssh -i ~/.ssh/viikko5_actions -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=.github/ssh_known_hosts ubuntu@"$HOST" 'bash /home/ubuntu/viikko5/scripts/deploy.sh'
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          ssh -i ~/.ssh/viikko5_actions -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts ubuntu@"$HOST" 'bash /home/ubuntu/viikko5/scripts/deploy.sh'
