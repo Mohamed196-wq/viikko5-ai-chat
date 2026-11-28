@@ -38,6 +38,11 @@ jobs:
       - name: Hae koodi
         uses: actions/checkout@v6
 
+      - name: Yhdista Tailscale
+        uses: tailscale/github-action@v4
+        with:
+          authkey: ${{ secrets.TS_AUTHKEY }}
+
       - name: Julkaise palvelimelle A
         env:
           SSH_KEY: ${{ secrets.CPOUTA_SSH_KEY }}
