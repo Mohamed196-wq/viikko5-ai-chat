@@ -1,0 +1,14 @@
+[Unit]
+Description=Viikko 5 AI Chat
+After=network.target mariadb.service ollama.service
+
+[Service]
+User=viikko5
+WorkingDirectory=/home/ubuntu/viikko5
+EnvironmentFile=/home/ubuntu/viikko5/.env
+EnvironmentFile=-/home/ubuntu/viikko5/.deploy-version
+ExecStart=/home/ubuntu/viikko5/.venv/bin/gunicorn --workers 1 --threads 2 --bind 127.0.0.1:8002 --timeout 240 app:app
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

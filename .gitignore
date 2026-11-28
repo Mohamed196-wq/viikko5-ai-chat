@@ -3,3 +3,6 @@
 __pycache__/
 *.pyc
 nginx-default-backup.conf
+
+.deploy-version
+app.py.backup

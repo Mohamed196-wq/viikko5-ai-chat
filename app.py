@@ -81,3 +81,10 @@ def chat():
         mimetype="text/plain",
         headers={"X-Accel-Buffering": "no", "Cache-Control": "no-cache"},
     )
+
+
+@app.get("/health")
+def health():
+    import os
+
+    return {"sha": os.environ.get("DEPLOY_SHA", "unknown")}
